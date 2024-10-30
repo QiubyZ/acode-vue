@@ -1,0 +1,17 @@
+{
+  "id": "acode.python.custom",
+  "name": "Python Language Custom",
+  "main": "dist/main.js",
+  "version": "1.0.0",
+  "readme": "readme.md",
+  "icon": "icon.png",
+  "files": [],
+  "minVersionCode": 290,
+  "price": "85,00",
+  "author": {
+    "name": "Qiuby Zhukhi",
+    "email": "qzhukhi@gmail.com",
+    "github": "QiubyZ",
+    "website": "https://www.facebook.com/QiubyZhuk"
+  }
+}
