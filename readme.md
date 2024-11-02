@@ -7,6 +7,8 @@ Custom Your Python Language Server, This configurate default setting is **jedi-l
 
 ![preview](https://raw.githubusercontent.com/QiubyZ/code-python-custom/refs/heads/main/settings.jpg)
 
+[YouTube](https://m.youtube.com/watch?v=WCucFhGbEqc&t=9s)
+
 ```bash
   pip install -U jedi-language-server
 ```
