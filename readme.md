@@ -1,5 +1,5 @@
-# Acode plugin
+# Python Language Custom
+Custom Your Python Language Server
+This configurate default setting is **jedi-language-server**
 
-> For typescript version of plugin template switch this repo to main-ts
-
-Read acode plugin [documentation](https://acode.foxdebug.com/plugin-docs) to develop plugin for acode editor.
+![preview](https://github.com/QiubyZ/code-python-custom/blob/188a94d4e2e0d71b9a5e1f35685d5559f275fa7a/settings.jpg)
