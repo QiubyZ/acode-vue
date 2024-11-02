@@ -1,11 +1,11 @@
 import plugin from "../plugin.json";
 class AcodePlugin {
   async init() {
-    
+
     let acodeLanguageClient = acode.require("acode-language-client");
-    
+
     if (acodeLanguageClient) {
-      
+
       this.setupLanguageClient(acodeLanguageClient);
     } else {
       window.addEventListener("plugin.install", ({ detail }) => {
@@ -17,7 +17,7 @@ class AcodePlugin {
     }
   }
   get settings() {
-    
+
     // UPDATE SETTING SAAT RESTART ACODE
     if (!window.acode) return this.defaultSettings;
     const AppSettings = acode.require("settings");
@@ -26,41 +26,108 @@ class AcodePlugin {
       //Menjadikan Method defaultSettings sebagai nilai Default
       value = AppSettings.value[plugin.id] = this.defaultSettings;
       AppSettings.update();
-     
+
     }
     return value;
   }
 
   get defaultSettings() {
     return {
-      serverPath: "pylsp",
+      serverPath: "jedi-language-server",
       arguments: ["--check-parent-process"],
       languageClientConfig: {
-        configuration: { ignore: ["W292","E501", "E401", "F401", "F704"] },
-        pylsp: {
-          configurationSources: ["pycodestyle"],
-          plugins: {
-            pycodestyle: {
-              enabled: true,
-              ignore: ["E501", "W292"],
-              maxLineLength: 10,
-            },
-            pyflakes: {
-              enabled: false, //this.settings.linter === "pyflakes"
-            },
-            pylint: {
-              enabled: false, //this.settings.linter === "pylint"
-            },
-            pyls_mypy: {
-              enabled: false, //this.settings.linter === "mypy"
-            },
+        initializationOptions: {
+          codeAction: {
+            nameExtractVariable: "jls_extract_var",
+            nameExtractFunction: "jls_extract_def"
           },
-        },
-      },
+          completion: {
+            disableSnippets: false,
+            resolveEagerly: false,
+            ignorePatterns: []
+          },
+          diagnostics: {
+            enable: false,
+            didOpen: true,
+            didChange: true,
+            didSave: true
+          },
+          hover: {
+            enable: true,
+            disable: {
+              class: {
+                all: false,
+                names: [],
+                fullNames: []
+              },
+              function: {
+                all: false,
+                names: [],
+                fullNames: []
+              },
+              instance: {
+                all: false,
+                names: [],
+                fullNames: []
+              },
+              keyword: {
+                all: false,
+                names: [],
+                fullNames: []
+              },
+              module: {
+                all: false,
+                names: [],
+                fullNames: []
+              },
+              param: {
+                all: false,
+                names: [],
+                fullNames: []
+              },
+              path: {
+                all: false,
+                names: [],
+                fullNames: []
+              },
+              property: {
+                all: false,
+                names: [],
+                fullNames: []
+              },
+              statement: {
+                all: false,
+                names: [],
+                fullNames: []
+              }
+            }
+          },
+          jediSettings: {
+            autoImportModules: [],
+            caseInsensitiveCompletion: true,
+            debug: false
+          },
+          markupKindPreferred: "markdown",
+          workspace: {
+            extraPaths: [],
+            symbols: {
+              ignoreFolders: [
+                ".nox",
+                ".tox",
+                ".venv",
+                "__pycache__",
+                "venv"
+              ],
+              maxSymbols: 20
+            }
+          }
+        }
+      }
     };
   }
-  toast(t, m){
-    acode.alert(t, m, ()=>{});
+
+  toast(t, m) {
+    acode.alert(t, m, () => { });
   }
 
   setupLanguageClient(acodeLanguageClient) {
@@ -77,8 +144,8 @@ class AcodePlugin {
       "python",
       pythonClient, this.settings.languageClientConfig
     );
-    
-    acode.registerFormatter(plugin.name,["py"], () =>
+
+    acode.registerFormatter(plugin.name, ["py"], () =>
       acodeLanguageClient.format(),
     );
   }
@@ -87,9 +154,9 @@ class AcodePlugin {
 }
 
 if (window.acode) {
-  
+
   const acodePlugin = new AcodePlugin();
-  
+
   acode.setPluginInit(
     plugin.id,
     async (baseUrl, $page, { cacheFileUrl, cacheFile }) => {
