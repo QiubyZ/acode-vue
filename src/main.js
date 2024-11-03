@@ -1,4 +1,5 @@
 import plugin from "../plugin.json";
+let AppSettings = acode.require("settings");
 class AcodePlugin {
   async init() {
 
@@ -6,7 +7,7 @@ class AcodePlugin {
 
     if (acodeLanguageClient) {
 
-      this.setupLanguageClient(acodeLanguageClient);
+      await this.setupLanguageClient(acodeLanguageClient);
     } else {
       window.addEventListener("plugin.install", ({ detail }) => {
         if (detail.name === "acode-language-client") {
@@ -17,18 +18,48 @@ class AcodePlugin {
     }
   }
   get settings() {
-
     // UPDATE SETTING SAAT RESTART ACODE
     if (!window.acode) return this.defaultSettings;
-    const AppSettings = acode.require("settings");
     let value = AppSettings.value[plugin.id];
     if (!value) {
       //Menjadikan Method defaultSettings sebagai nilai Default
       value = AppSettings.value[plugin.id] = this.defaultSettings;
       AppSettings.update();
-
     }
     return value;
+  }
+  get settingsMenuLayout() {
+    return {
+      list: [
+        {
+          index: 0,
+          key: "serverPath",
+          promptType: "text",
+          prompt: "Change the serverPath before running.",
+          text: "Python Executable File Path",
+          value: this.settings.serverPath,
+        },
+        {
+          index: 1,
+          key: "arguments",
+          promptType: "text",
+          info:"For multiple arguments, please use comma ','\r\nExample: --stdio, -v, -vv",
+          prompt: "Argument Of Language Server",
+          text: "Argument",
+          value: this.settings.arguments.join(", ")
+        },
+      ],
+
+      cb: (key, value) => {
+        switch(key){
+          case 'arguments':
+            value = value.split(",").map(item => item.trim());
+            break;
+        }
+        AppSettings.value[plugin.id][key] = value;
+        AppSettings.update();
+      },
+    };
   }
 
   get defaultSettings() {
@@ -126,11 +157,7 @@ class AcodePlugin {
     };
   }
 
-  toast(t, m) {
-    acode.alert(t, m, () => { });
-  }
-
-  setupLanguageClient(acodeLanguageClient) {
+  async setupLanguageClient(acodeLanguageClient) {
     let socket = acodeLanguageClient.getSocketForCommand(
       this.settings.serverPath,
       this.settings.arguments,
@@ -142,7 +169,8 @@ class AcodePlugin {
 
     acodeLanguageClient.registerService(
       "python",
-      pythonClient, this.settings.languageClientConfig
+      pythonClient,
+      this.settings.languageClientConfig
     );
 
     acode.registerFormatter(plugin.name, ["py"], () =>
@@ -150,13 +178,17 @@ class AcodePlugin {
     );
   }
 
-  async destroy() { }
+  async destroy() {
+    if(AppSettings.value[plugin.id]){
+      delete AppSettings.value[plugin.id];
+      AppSettings.update();
+    }
+  }
 }
 
 if (window.acode) {
 
   const acodePlugin = new AcodePlugin();
-
   acode.setPluginInit(
     plugin.id,
     async (baseUrl, $page, { cacheFileUrl, cacheFile }) => {
@@ -166,8 +198,11 @@ if (window.acode) {
       acodePlugin.baseUrl = baseUrl;
       await acodePlugin.init($page, cacheFile, cacheFileUrl);
     },
+    acodePlugin.settingsMenuLayout,
   );
+
   acode.setPluginUnmount(plugin.id, () => {
     acodePlugin.destroy();
   });
+
 }
