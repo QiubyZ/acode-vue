@@ -18,5 +18,8 @@
   **Auto Complete Jedi**
   ![YouTube](https://raw.githubusercontent.com/QiubyZ/acode-python-custom/refs/heads/main/preview.gif)
 
+## Update Info
+ - Readme.md
+ - Gear Icon for Settings only path & argumen
 
 Jedi Repo: https://github.com/pappasam/jedi-language-server

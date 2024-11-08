@@ -43,9 +43,9 @@ class AcodePlugin {
           index: 1,
           key: "arguments",
           promptType: "text",
-          info:"For multiple arguments, please use comma ','\r\nExample: --stdio, -v, -vv",
-          prompt: "Argument Of Language Server",
-          text: "Argument",
+          info:" End with a comma ','\r\nExample: --stdio, -v, -vv",
+          prompt: "Python Args",
+          text: "Python Argument",
           value: this.settings.arguments.join(", ")
         },
       ],
@@ -53,7 +53,12 @@ class AcodePlugin {
       cb: (key, value) => {
         switch(key){
           case 'arguments':
+            if(!value){
             value = value.split(",").map(item => item.trim());
+            }
+            else{
+              value = [];
+            }
             break;
         }
         AppSettings.value[plugin.id][key] = value;
@@ -65,7 +70,7 @@ class AcodePlugin {
   get defaultSettings() {
     return {
       serverPath: "jedi-language-server",
-      arguments: ["--check-parent-process"],
+      arguments: [],
       languageClientConfig: {
         initializationOptions: {
           codeAction: {
