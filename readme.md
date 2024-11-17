@@ -19,7 +19,8 @@
   ![YouTube](https://raw.githubusercontent.com/QiubyZ/acode-python-custom/refs/heads/main/preview.gif)
 
 ## Update Info
+ - Settings menu fix 
  - Readme.md
  - Gear Icon for Settings only path & argumen
 
-Jedi Repo: https://github.com/pappasam/jedi-language-server
+Jedi Repo: [Jedi](https://github.com/pappasam/jedi-language-server)

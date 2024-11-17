@@ -6,7 +6,6 @@ class AcodePlugin {
     let acodeLanguageClient = acode.require("acode-language-client");
 
     if (acodeLanguageClient) {
-
       await this.setupLanguageClient(acodeLanguageClient);
     } else {
       window.addEventListener("plugin.install", ({ detail }) => {
@@ -43,7 +42,7 @@ class AcodePlugin {
           index: 1,
           key: "arguments",
           promptType: "text",
-          info:" End with a comma ','\r\nExample: --stdio, -v, -vv",
+          info: " End with a comma ','<br>Example: --stdio, -v, -vv",
           prompt: "Python Args",
           text: "Python Argument",
           value: this.settings.arguments.join(", ")
@@ -51,14 +50,9 @@ class AcodePlugin {
       ],
 
       cb: (key, value) => {
-        switch(key){
+        switch (key) {
           case 'arguments':
-            if(!value){
-            value = value.split(",").map(item => item.trim());
-            }
-            else{
-              value = [];
-            }
+            value = value ? value.split(",").map(item => item.trim()) : [];
             break;
         }
         AppSettings.value[plugin.id][key] = value;
@@ -184,10 +178,11 @@ class AcodePlugin {
   }
 
   async destroy() {
-    if(AppSettings.value[plugin.id]){
+    if (AppSettings.value[plugin.id]) {
       delete AppSettings.value[plugin.id];
       AppSettings.update();
     }
+    window.toast(`Delete Configuration of ${plugin.name}`)
   }
 }
 
@@ -209,5 +204,4 @@ if (window.acode) {
   acode.setPluginUnmount(plugin.id, () => {
     acodePlugin.destroy();
   });
-
 }
