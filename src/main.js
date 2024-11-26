@@ -108,8 +108,7 @@ class AcodePlugin {
 
     acodeLanguageClient.registerService(
       this.settings.modes,
-      LanguageClient,
-      this.settings.languageClientConfig
+      LanguageClient
     );
   }
 
