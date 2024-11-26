@@ -1,6 +1,5 @@
 import plugin from "../plugin.json";
 let AppSettings = acode.require("settings");
-
 class AcodePlugin {
   constructor() {
     this.name_language_type = "vue"
