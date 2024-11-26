@@ -1,8 +1,8 @@
 {
-  "id": "acode.python.custom",
-  "name": "Python Language Custom",
+  "id": "acode.plugin.vue",
+  "name": "Vue Language Server",
   "main": "dist/main.js",
-  "version": "1.0.4",
+  "version": "1.0.0",
   "readme": "readme.md",
   "icon": "icon.png",
   "files": [],

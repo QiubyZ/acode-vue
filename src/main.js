@@ -1,10 +1,15 @@
 import plugin from "../plugin.json";
 let AppSettings = acode.require("settings");
+
 class AcodePlugin {
+  constructor() {
+    this.name_language_type = "vue"
+    this.languageserver = "vls";
+    //this.extendsion = ["js", "vue"];
+    this.standart_args = ["--stdio"]
+  }
   async init() {
-
     let acodeLanguageClient = acode.require("acode-language-client");
-
     if (acodeLanguageClient) {
       await this.setupLanguageClient(acodeLanguageClient);
     } else {
@@ -13,6 +18,7 @@ class AcodePlugin {
           acodeLanguageClient = acode.require("acode-language-client");
           this.setupLanguageClient(acodeLanguageClient);
         }
+
       });
     }
   }
@@ -34,19 +40,31 @@ class AcodePlugin {
           index: 0,
           key: "serverPath",
           promptType: "text",
-          prompt: "Change the serverPath before running.",
-          text: "Python Executable File Path",
+          info: `Lang Server set to ${this.settings.serverPath}`,
+          prompt: "Set Language Server Name",
+          text: `${plugin.name} Executable File Path`,
           value: this.settings.serverPath,
         },
         {
           index: 1,
           key: "arguments",
           promptType: "text",
-          info: " End with a comma ','<br>Example: --stdio, -v, -vv",
-          prompt: "Python Args",
-          text: "Python Argument",
+          info: "Tutorial:<br>End with a comma ',' if multi args<br>Example: --stdio, -v, -vv",
+          prompt: `set Args`,
+          text: `${plugin.name} Argument`,
           value: this.settings.arguments.join(", ")
         },
+        {
+          index: 2,
+          key: "modes",
+          promptType: "text",
+          info: `set to ${this.settings.modes}`,
+          prompt: `Use Modes`,
+          text: `${plugin.name} Modes`,
+          value: this.settings.modes
+        },
+
+
       ],
 
       cb: (key, value) => {
@@ -63,96 +81,9 @@ class AcodePlugin {
 
   get defaultSettings() {
     return {
-      serverPath: "jedi-language-server",
-      arguments: [],
-      languageClientConfig: {
-        initializationOptions: {
-          codeAction: {
-            nameExtractVariable: "jls_extract_var",
-            nameExtractFunction: "jls_extract_def"
-          },
-          completion: {
-            disableSnippets: false,
-            resolveEagerly: false,
-            ignorePatterns: []
-          },
-          diagnostics: {
-            enable: false,
-            didOpen: true,
-            didChange: true,
-            didSave: true
-          },
-          hover: {
-            enable: true,
-            disable: {
-              class: {
-                all: false,
-                names: [],
-                fullNames: []
-              },
-              function: {
-                all: false,
-                names: [],
-                fullNames: []
-              },
-              instance: {
-                all: false,
-                names: [],
-                fullNames: []
-              },
-              keyword: {
-                all: false,
-                names: [],
-                fullNames: []
-              },
-              module: {
-                all: false,
-                names: [],
-                fullNames: []
-              },
-              param: {
-                all: false,
-                names: [],
-                fullNames: []
-              },
-              path: {
-                all: false,
-                names: [],
-                fullNames: []
-              },
-              property: {
-                all: false,
-                names: [],
-                fullNames: []
-              },
-              statement: {
-                all: false,
-                names: [],
-                fullNames: []
-              }
-            }
-          },
-          jediSettings: {
-            autoImportModules: [],
-            caseInsensitiveCompletion: true,
-            debug: false
-          },
-          markupKindPreferred: "markdown",
-          workspace: {
-            extraPaths: [],
-            symbols: {
-              ignoreFolders: [
-                ".nox",
-                ".tox",
-                ".venv",
-                "__pycache__",
-                "venv"
-              ],
-              maxSymbols: 20
-            }
-          }
-        }
-      }
+      serverPath: this.languageserver,
+      arguments: this.standart_args,
+      modes: this.name_language_type,
     };
   }
 
@@ -161,19 +92,25 @@ class AcodePlugin {
       this.settings.serverPath,
       this.settings.arguments,
     );
-    let pythonClient = new acodeLanguageClient.LanguageClient({
+    let LanguageClient = new acodeLanguageClient.LanguageClient({
       type: "socket",
       socket,
     });
 
-    acodeLanguageClient.registerService(
-      "python",
-      pythonClient,
-      this.settings.languageClientConfig
-    );
+    // LanguageClient.sendInitialize(
+    //   {
+    //     initializationOptions:{
+    //       typescript: {
+    //         tsdk: "node_modules/typescript/lib"
+    //     }
+    //     }
+    //   }
+    //   )
 
-    acode.registerFormatter(plugin.name, ["py"], () =>
-      acodeLanguageClient.format(),
+    acodeLanguageClient.registerService(
+      this.settings.modes,
+      LanguageClient,
+      this.settings.languageClientConfig
     );
   }
 
