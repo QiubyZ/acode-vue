@@ -2,9 +2,8 @@ import plugin from "../plugin.json";
 let AppSettings = acode.require("settings");
 class AcodePlugin {
   constructor() {
-    this.name_language_type = "vue"
-    this.languageserver = "vls";
-    //this.extendsion = ["js", "vue"];
+    this.name_language_type = "vue" 
+    this.languageserver = "vls"
     this.standart_args = ["--stdio"]
   }
   async init() {
