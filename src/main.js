@@ -5,6 +5,14 @@ class AcodePlugin {
     this.name_language_type = "vue" 
     this.languageserver = "vls"
     this.standart_args = ["--stdio"]
+    this.initOptions = {
+           typescript: {
+             tsdk: "node_modules/typescript/lib"
+         },
+        "vue": {
+          "hybridMode": true
+        }
+    }
   }
   async init() {
     let acodeLanguageClient = acode.require("acode-language-client");
@@ -82,6 +90,9 @@ class AcodePlugin {
       serverPath: this.languageserver,
       arguments: this.standart_args,
       modes: this.name_language_type,
+      lspConfigs: {
+        initializationOptions: this.initOptions
+      }
     };
   }
 
@@ -93,18 +104,9 @@ class AcodePlugin {
     let LanguageClient = new acodeLanguageClient.LanguageClient({
       type: "socket",
       socket,
+      initializationOptions: this.settings.lspConfigs.initializationOptions || this.initOptions
     });
-
-    // LanguageClient.sendInitialize(
-    //   {
-    //     initializationOptions:{
-    //       typescript: {
-    //         tsdk: "node_modules/typescript/lib"
-    //     }
-    //     }
-    //   }
-    //   )
-
+    
     acodeLanguageClient.registerService(
       this.settings.modes,
       LanguageClient
